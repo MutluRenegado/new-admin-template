@@ -43,6 +43,7 @@
       text-decoration: none;
       border-left: 3px solid transparent;
       transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
     }
     .sidebar a:hover, .sidebar a.active {
       background: #334155;
@@ -56,7 +57,7 @@
       background: #f4f6f9;
     }
     .header {
-      background: #fff;
+      background: #e0a3b8;  /* Light maroon */
       padding: 1rem 2rem;
       box-shadow: 0 1px 4px #0001;
       display: flex;
@@ -83,22 +84,52 @@
   <nav class="sidebar">
     <h2>ADMIN</h2>
     <ul>
-      <li><a href="#" class="active">Dashboard</a></li>
-      <li><a href="#">Users</a></li>
-      <li><a href="#">Settings</a></li>
-      <li><a href="#">Reports</a></li>
-      <!-- Add more links here -->
+      <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
+      <li><a href="#" data-page="users">Users</a></li>
+      <li><a href="#" data-page="settings">Settings</a></li>
+      <li><a href="#" data-page="reports">Reports</a></li>
     </ul>
   </nav>
   <div class="main">
     <div class="header">
-      <h1>Dashboard</h1>
-      <!-- Add header actions/user avatar here -->
+      <h1 id="page-title">Dashboard</h1>
     </div>
     <section id="app-content">
-      <!-- Embed your application here -->
-      <p>Welcome to your admin panel. Add your app’s content here.</p>
+      <p>This is the dashboard page. Here you can see an overview of your app.</p>
     </section>
   </div>
+  <script>
+    // Page content for each menu item (no duplicate <h2> titles)
+    const pages = {
+      dashboard: `
+        <p>This is the dashboard page. Here you can see an overview of your app.</p>
+      `,
+      users: `
+        <p>Manage your users here. Add, edit, or remove users as needed.</p>
+      `,
+      settings: `
+        <p>Adjust your admin panel settings here.</p>
+      `,
+      reports: `
+        <p>View reports and analytics here.</p>
+      `
+    };
+
+    // Menu click handler: any order, updates title and content
+    document.querySelectorAll('.sidebar a[data-page]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Remove active from all
+        document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+        // Set current as active
+        this.classList.add('active');
+        // Load content
+        const page = this.getAttribute('data-page');
+        document.getElementById('app-content').innerHTML = pages[page] || "<p>Page not found.</p>";
+        // Update page title
+        document.getElementById('page-title').textContent = this.textContent.trim();
+      });
+    });
+  </script>
 </body>
 </html>
