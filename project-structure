@@ -1,1 +1,7 @@
+/hashtag-app
+│
+├── index.html          → login + app UI
+├── style.css           → external style if needed
+├── app.js              → main logic
+└── firebase-config.js  → your Firebase credentials
 
