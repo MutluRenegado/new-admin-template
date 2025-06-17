@@ -1,7 +1,25 @@
-/hashtag-app
-│
-├── index.html          → login + app UI
-├── style.css           → external style if needed
-├── app.js              → main logic
-└── firebase-config.js  → your Firebase credentials
-
+/
+├── components/
+│   ├── NewLoginTemplate.tsx
+│   └── ... (other reusable UI components)
+├── lib/
+│   └── firebase/
+│       ├── auth.ts
+│       ├── firebase-config.ts
+│       ├── firestore.ts
+│   ├── firebase-admin-ts.ts
+│   └── ... (other shared libraries)
+├── pages/
+│   ├── index.tsx
+│   ├── login.tsx
+│   ├── register.tsx          // (optional, for registration)
+│   └── ... (other pages, e.g., dashboard.tsx)
+├── public/
+│   └── ... (static assets like images, favicon, etc.)
+├── styles/
+│   └── ... (CSS/SCSS files, e.g., globals.css)
+├── .env.local
+├── package.json
+├── tsconfig.json
+├── next.config.js
+└── README.md
