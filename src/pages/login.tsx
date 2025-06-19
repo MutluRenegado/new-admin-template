@@ -1,5 +1,5 @@
-import FirebaseUILogin from '@/components/FirebaseUILogin';
+import NewLoginTemplate from '@/components/NewLoginTemplate';
 
 export default function LoginPage() {
-  return <FirebaseUILogin />;
+  return <NewLoginTemplate />;
 }
