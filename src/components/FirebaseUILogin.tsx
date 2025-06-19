@@ -1,61 +1,104 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
-import * as firebaseui from 'firebaseui';
-import 'firebaseui/dist/firebaseui.css'; // Import FirebaseUI styles
+import { useState } from 'react';
+import { loginUser, loginWithGoogle } from '@/lib/firebase/auth';
 
-// Your Firebase config - replace with your actual config
-const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
-};
+export default function NewLoginTemplate() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await loginUser(email, password);
+      setError('');
+      alert('Logged in successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Login failed.');
+    }
+  };
 
-export default function FirebaseUILogin() {
-  const uiRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!uiRef.current) return;
-
-    // FirebaseUI config
-    const uiConfig = {
-      signInOptions: [
-        EmailAuthProvider.PROVIDER_ID,
-        GoogleAuthProvider.PROVIDER_ID,
-        // Add more providers here if needed
-      ],
-      signInSuccessUrl: '/', // Redirect after successful login
-      tosUrl: '/terms',      // Terms of service url
-      privacyPolicyUrl: '/privacy', // Privacy policy url
-    };
-
-    // Initialize the FirebaseUI Widget using Firebase.
-    let ui =
-      firebaseui.auth.AuthUI.getInstance() ||
-      new firebaseui.auth.AuthUI(auth);
-
-    ui.start(uiRef.current, uiConfig);
-
-    // Cleanup UI on unmount
-    return () => {
-      ui.delete();
-    };
-  }, []);
+  const handleGoogleLogin = async () => {
+    try {
+      await loginWithGoogle();
+      setError('');
+      alert('Logged in with Google!');
+    } catch (err: any) {
+      setError(err.message || 'Google login failed.');
+    }
+  };
 
   return (
-    <div style={{ maxWidth: 320, margin: '3rem auto' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        Sign in to Your App
-      </h2>
-      <div ref={uiRef}></div>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Firebase Login</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="email"
+          placeholder="Email"
+          required
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          required
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          style={styles.input}
+        />
+        <button type="submit" style={styles.button}>Login</button>
+      </form>
+
+      <button onClick={handleGoogleLogin} style={{ ...styles.button, background: '#4285F4' }}>
+        Login with Google
+      </button>
+
+      {error && <p style={styles.error}>{error}</p>}
     </div>
   );
 }
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    maxWidth: '400px',
+    margin: '5rem auto',
+    padding: '2rem',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    borderRadius: '8px',
+    background: '#fff',
+    textAlign: 'center',
+    fontFamily: 'sans-serif',
+  },
+  title: {
+    marginBottom: '1.5rem',
+    fontSize: '1.5rem',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '1rem',
+  },
+  input: {
+    padding: '0.75rem',
+    marginBottom: '1rem',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '1rem',
+  },
+  button: {
+    padding: '0.75rem',
+    border: 'none',
+    borderRadius: '4px',
+    background: '#0070f3',
+    color: '#fff',
+    fontSize: '1rem',
+    cursor: 'pointer',
+  },
+  error: {
+    color: 'red',
+    marginTop: '1rem',
+  },
+};
